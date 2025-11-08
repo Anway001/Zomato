@@ -15,8 +15,8 @@ router.post('/', authmiddleware.authfoodpatnermiddleware, upload.single('video')
 router.get('/',authmiddleware.usermiddleware, foodController.getAllFoodItems);
 
 
+router.get('/likes', authmiddleware.usermiddleware, foodController.likedFoodItems);
 
-
-
+router.get("/saves", authmiddleware.usermiddleware, foodController.savedFoodItems);
 
 module.exports = router;
