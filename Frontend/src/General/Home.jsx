@@ -19,6 +19,7 @@ function Home() {
     const [videos, setVideos] = useState([]);
     const [activeIndex, setActiveIndex] = useState(0);
     const [likes, setLikes] = useState({});
+    const [likeCounts, setLikeCounts] = useState({});
     const [saves, setSaves] = useState({});
     const [comments, setComments] = useState({});
     const [commentInputs, setCommentInputs] = useState({});
@@ -47,6 +48,7 @@ function Home() {
     useEffect(() => {
         if (!videos.length) {
             setLikes({});
+            setLikeCounts({});
             setSaves({});
             setComments({});
             setCommentInputs({});
@@ -58,6 +60,15 @@ function Home() {
             videos.forEach((item, index) => {
                 const key = getVideoKey(item, index);
                 next[key] = prev[key] ?? false;
+            });
+            return next;
+        });
+        setLikeCounts(() => {
+            const next = {};
+            videos.forEach((item, index) => {
+                const key = getVideoKey(item, index);
+                const count = typeof item.likeCount === 'number' ? item.likeCount : 0;
+                next[key] = count;
             });
             return next;
         });
@@ -216,7 +227,15 @@ function Home() {
         }
         try {
             await axios.post('http://localhost:8080/api/food/likes', { foodId: itemId }, { withCredentials: true });
-            setLikes((prev) => ({ ...prev, [key]: !prev[key] }));
+            setLikes((prev) => {
+                const nextLiked = !prev[key];
+                setLikeCounts((prevCounts) => {
+                    const current = prevCounts[key] ?? 0;
+                    const nextCount = nextLiked ? current + 1 : Math.max(current - 1, 0);
+                    return { ...prevCounts, [key]: nextCount };
+                });
+                return { ...prev, [key]: nextLiked };
+            });
         } catch (error) {
             console.error('Failed to toggle like:', error.response?.data || error.message);
         }
@@ -264,6 +283,7 @@ function Home() {
                 {videos.map((item, index) => {
                     const key = getVideoKey(item, index);
                     const isLiked = !!likes[key];
+                    const likeCount = likeCounts[key] ?? (typeof item.likeCount === 'number' ? item.likeCount : 0);
                     const isSaved = !!saves[key];
                     const commentList = comments[key] || [];
                     const showComments = !!visibleComments[key];
@@ -318,7 +338,7 @@ function Home() {
                                         onClick={() => handleLike(item, key)}
                                     >
                                         <span className="glass-icon">{isLiked ? '♥' : '♡'}</span>
-                                        <span className="glass-label">{isLiked ? 'Liked' : 'Like'}</span>
+                                        <span className="glass-label">{isLiked ? 'Liked' : 'Like'} ({likeCount})</span>
                                     </button>
                                     <button
                                         type="button"
