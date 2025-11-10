@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Home.css';
 
@@ -9,6 +9,7 @@ function truncateText(text) {
 }
 
 function Home() {
+    const navigate = useNavigate();
     const containerRef = useRef(null);
     const videoRefs = useRef([]);
     const activeIndexRef = useRef(0);
@@ -30,16 +31,24 @@ function Home() {
     useEffect(() => {
         axios.get('http://localhost:8080/api/food', { withCredentials: true })
             .then((response) => {
-                if (response.data && response.data.foodItems) {
+                if (!response.data?.isAuthenticated) {
+                    navigate('/user/login', { replace: true });
+                    return;
+                }
+                if (response.data?.foodItems) {
                     setVideos(response.data.foodItems);
                     setActiveIndex(0);
                 }
                 console.log('Food Items fetched successfully', response.data);
             })
             .catch((err) => {
+                if (err.response?.status === 401) {
+                    navigate('/user/login', { replace: true });
+                    return;
+                }
                 console.error('Error fetching food items:', err);
             });
-    }, []);
+    }, [navigate]);
 
     useEffect(() => {
         videoRefs.current = videoRefs.current.slice(0, videos.length);

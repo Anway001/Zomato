@@ -10,6 +10,10 @@ function Profile() {
   const [error, setError] = useState(null);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followLoading, setFollowLoading] = useState(false);
+  const [followError, setFollowError] = useState(null);
   const [fullscreenVideo, setFullscreenVideo] = useState(-1);
   const reelsContainerRef = useRef(null);
 
@@ -18,6 +22,9 @@ function Profile() {
       setError('Food partner not specified');
       setProfile(null);
       setVideos([]);
+      setFollowersCount(0);
+      setIsFollowing(false);
+      setFollowError(null);
       setLoading(false);
       return;
     }
@@ -32,7 +39,11 @@ function Profile() {
 
       setProfile(response.data.partner ?? null);
       const foodItems = response.data.partner?.foodItems || [];
+      const followerValue = Number(response.data.partner?.followersCount ?? 0);
       setVideos(foodItems);
+      setFollowersCount(Number.isNaN(followerValue) ? 0 : followerValue);
+      setIsFollowing(response.data.isFollowing ?? false);
+      setFollowError(null);
       setError(null);
       setLoading(false);
     })
@@ -41,6 +52,9 @@ function Profile() {
       setError(err.response?.data?.message || 'Failed to fetch profile');
       setProfile(null);
       setVideos([]);
+      setFollowersCount(0);
+      setIsFollowing(false);
+      setFollowError(err.response?.data?.message || null);
       setLoading(false);
     });
   }, [id]);
@@ -54,10 +68,37 @@ function Profile() {
     }
   }, [fullscreenVideo]);
 
+  const handleFollowToggle = () => {
+    if (!id || followLoading) {
+      return;
+    }
+    setFollowLoading(true);
+    axios.post(`http://localhost:8080/api/follow/${id}`, {}, { withCredentials: true })
+    .then(response => {
+      setIsFollowing(response.data?.isFollowing ?? false);
+      setFollowersCount(prev => {
+        const nextValue = Number(response.data?.followersCount);
+        if (Number.isNaN(nextValue)) {
+          return prev;
+        }
+        return nextValue;
+      });
+      setFollowError(null);
+    })
+    .catch(err => {
+      setFollowError(err.response?.data?.message || 'Unable to update follow status');
+    })
+    .finally(() => {
+      setFollowLoading(false);
+    });
+  };
+
   const businessName = profile?.name || 'Business name';
   const address = profile?.address || 'Address';
   const totalMeals = profile?.totalMeals ?? 43;
   const customers = profile?.customersServed ?? '15K';
+  const followerTotal = Number.isFinite(followersCount) ? followersCount : 0;
+  const followerLabel = followerTotal === 1 ? 'follower' : 'followers';
 
 
 
@@ -110,6 +151,21 @@ function Profile() {
             </div>
           </div>
 
+          <div className="follow-actions">
+            <button
+              type="button"
+              className={`follow-button${isFollowing ? ' following' : ''}`}
+              onClick={handleFollowToggle}
+              disabled={followLoading}
+            >
+              {followLoading ? 'Please wait...' : isFollowing ? 'Following' : 'Follow'}
+            </button>
+            <span className="followers-count">{followerTotal} {followerLabel}</span>
+          </div>
+          {followError && (
+            <div className="follow-error">{followError}</div>
+          )}
+
           {/* Stats */}
           <div className="stats-row">
             <div className="stat-box">
@@ -120,6 +176,11 @@ function Profile() {
             <div className="stat-box">
               <div className="stat-value">{customers}</div>
               <div className="stat-label">customers served</div>
+            </div>
+
+            <div className="stat-box">
+              <div className="stat-value">{followerTotal}</div>
+              <div className="stat-label">{followerLabel}</div>
             </div>
           </div>
         </div>

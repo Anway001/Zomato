@@ -26,6 +26,10 @@ const foodPartnerModuleSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    followersCount: {
+        type: Number,
+        default: 0,
+    },
 
 })
 

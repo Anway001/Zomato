@@ -1,5 +1,6 @@
 const FoodPartnerModel = require('../models/foodpatnermodules');
 const FoodModel = require('../models/foodmodel');
+const FollowModel = require('../models/Follow.model');
 
 async function getFoodPartnerById(req, res) {
     try {
@@ -17,12 +18,20 @@ async function getFoodPartnerById(req, res) {
         const partnerData = foodPartner.toObject();
         delete partnerData.password;
 
+        let isFollowing = false;
+        const userId = req.user?._id;
+        if (userId) {
+            const followRecord = await FollowModel.exists({ user: userId, partner: partnerId });
+            isFollowing = !!followRecord;
+        }
+
         res.status(200).json({
             message: "Food Partner details fetched successfully",
             partner: {
                 ...partnerData,
                 foodItems: foodItembyFoodPartner
-            }
+            },
+            isFollowing
         });
     } catch (error) {
         console.error('Error fetching food partner:', error);

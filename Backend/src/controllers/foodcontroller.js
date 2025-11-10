@@ -40,6 +40,7 @@ async function createFood(req, res) {
 async function getAllFoodItems (req, res) {
     try {
         const actorId = req.user?._id || req.user || req.foodpartner?._id || req.foodpartner;
+        const isAuthenticated = Boolean(actorId);
         const foodItems = await foodmodel.find({}).lean();
         let likedSet = new Set();
         let savedSet = new Set();
@@ -64,7 +65,8 @@ async function getAllFoodItems (req, res) {
 
         res.status(200).json({
             message: 'Food items retrieved successfully',
-            foodItems: enrichedFoodItems
+            foodItems: enrichedFoodItems,
+            isAuthenticated
         }); 
     }
     catch (error) {
