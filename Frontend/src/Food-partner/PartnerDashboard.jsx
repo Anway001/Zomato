@@ -14,7 +14,8 @@ function PartnerDashboard() {
         totalItems: 0,
         totalLikes: 0,
         totalSaves: 0,
-        totalOrders: 0
+        totalOrders: 0,
+        totalEarnings: 0
     });
 
     useEffect(() => {
@@ -41,11 +42,14 @@ function PartnerDashboard() {
             const totalSaves = items.reduce((sum, item) => sum + (item.saveCount || 0), 0);
 
             let totalOrders = 0;
+            let totalEarnings = 0;
             try {
                 const ordersResponse = await axios.get('http://localhost:8080/api/orders/partner/orders', {
                     withCredentials: true
                 });
-                totalOrders = ordersResponse.data?.orders?.length || 0;
+                const orders = ordersResponse.data?.orders || [];
+                totalOrders = orders.length;
+                totalEarnings = orders.reduce((sum, order) => sum + order.totalAmount, 0);
             } catch (orderError) {
                 console.log('Could not fetch orders:', orderError.message);
             }
@@ -54,7 +58,8 @@ function PartnerDashboard() {
                 totalItems: items.length,
                 totalLikes,
                 totalSaves,
-                totalOrders
+                totalOrders,
+                totalEarnings
             });
 
         } catch (error) {
@@ -135,6 +140,10 @@ function PartnerDashboard() {
                 <div className="stat-card">
                     <h3>{stats.totalOrders}</h3>
                     <p>Total Orders</p>
+                </div>
+                <div className="stat-card earnings">
+                    <h3>₹{stats.totalEarnings.toFixed(2)}</h3>
+                    <p>Total Earnings</p>
                 </div>
             </div>
 
