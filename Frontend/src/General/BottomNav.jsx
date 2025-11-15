@@ -20,7 +20,7 @@ function BottomNav({ theme = 'dark' }) {
                 withCredentials: true
             });
             setUserType(response.data?.type || null);
-        } catch (error) {
+        } catch {
             // User not authenticated
             setUserType(null);
         }

@@ -12,7 +12,7 @@ function truncateText(text) {
 
 function Home() {
     const navigate = useNavigate();
-    const { cart, addToCart } = useCart();
+    const { addToCart } = useCart();
     const containerRef = useRef(null);
     const videoRefs = useRef([]);
     const activeIndexRef = useRef(0);

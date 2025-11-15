@@ -9,7 +9,7 @@ import './Explore.css';
 
 function Explore() {
     const navigate = useNavigate();
-    const { cart, addToCart } = useCart();
+    const { addToCart } = useCart();
     const { showToast } = useToast();
     const [foods, setFoods] = useState([]);
     const [loading, setLoading] = useState(true);
