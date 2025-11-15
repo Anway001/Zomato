@@ -63,7 +63,8 @@ async function getAllFoodItems (req, res) {
     try {
         const actorId = req.user?._id || req.user || req.foodpartner?._id || req.foodpartner;
         const isAuthenticated = Boolean(actorId);
-        const foodItems = await foodmodel.find({}).lean();
+        let foodItems = await foodmodel.find({}).lean();
+        foodItems = foodItems.sort(() => Math.random() - 0.5);
         const foodIds = foodItems.map((item) => item._id);
         let likedSet = new Set();
         let savedSet = new Set();

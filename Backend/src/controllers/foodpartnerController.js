@@ -3,6 +3,15 @@ const FoodModel = require('../models/foodmodel');
 const FollowModel = require('../models/Follow.model');
 const OrderModel = require('../models/ordermodel');
 
+const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+};
+
 async function getFoodPartnerById(req, res) {
     try {
         const partnerId = req.params?.id || req.foodpartner?._id;
@@ -15,7 +24,8 @@ async function getFoodPartnerById(req, res) {
             return res.status(404).json({ message: "Food Partner not found" });
         }
 
-        const foodItembyFoodPartner = await FoodModel.find({ foodpartner: partnerId });
+        let foodItembyFoodPartner = await FoodModel.find({ foodpartner: partnerId });
+        foodItembyFoodPartner = foodItembyFoodPartner.filter(item => item.video).sort(() => Math.random() - 0.5);
         const partnerData = foodPartner.toObject();
         delete partnerData.password;
 
