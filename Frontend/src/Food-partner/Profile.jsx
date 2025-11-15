@@ -118,6 +118,38 @@ function Profile() {
   const followerTotal = Number.isFinite(followersCount) ? followersCount : 0;
   const followerLabel = followerTotal === 1 ? 'follower' : 'followers';
 
+  const getUniqueCuisines = () => {
+    if (!videos || videos.length === 0) return [];
+    const cuisines = new Set();
+    videos.forEach(item => {
+      if (item.category) cuisines.add(item.category);
+      if (item.tags && Array.isArray(item.tags)) {
+        item.tags.forEach(tag => cuisines.add(tag));
+      }
+    });
+    return Array.from(cuisines).slice(0, 3);
+  };
+
+  const getAverageLikes = () => {
+    if (!videos || videos.length === 0) return 0;
+    const totalLikes = videos.reduce((sum, item) => sum + (item.likeCount || 0), 0);
+    return Math.round(totalLikes / videos.length);
+  };
+
+  const getPriceRange = () => {
+    if (!videos || videos.length === 0) return 'N/A';
+    const prices = videos.map(item => item.price || 0).filter(p => p > 0);
+    if (prices.length === 0) return 'N/A';
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+    if (minPrice === maxPrice) return `₹${minPrice}`;
+    return `₹${minPrice} - ₹${maxPrice}`;
+  };
+
+  const cuisines = getUniqueCuisines();
+  const avgLikes = getAverageLikes();
+  const priceRange = getPriceRange();
+
 
 
   return (
@@ -167,6 +199,27 @@ function Profile() {
               <div style={{ height: 8 }} />
               <div className="business-address">{address}</div>
             </div>
+          </div>
+
+          <div className="info-badges">
+            {cuisines.length > 0 && (
+              <div className="badge">
+                <span className="badge-label">Type</span>
+                <span className="badge-value">{cuisines.join(', ')}</span>
+              </div>
+            )}
+            {priceRange !== 'N/A' && (
+              <div className="badge">
+                <span className="badge-label">Price</span>
+                <span className="badge-value">{priceRange}</span>
+              </div>
+            )}
+            {avgLikes > 0 && (
+              <div className="badge">
+                <span className="badge-label">Avg Likes</span>
+                <span className="badge-value">❤️ {avgLikes}</span>
+              </div>
+            )}
           </div>
 
           <div className="follow-actions">
@@ -254,23 +307,6 @@ function Profile() {
             })}
           </div>
         )}
-        <div className="project-details">
-          <h2>About This Project</h2>
-          <p>This is a Zomato clone built with React and Node.js, featuring an immersive food discovery experience through vertical video reels. Users can browse, like, save, and order food from various partners.</p>
-          <h3>Features</h3>
-          <ul>
-            <li>Vertical video feed for food discovery</li>
-            <li>User authentication and profiles</li>
-            <li>Cart and order management</li>
-            <li>Partner dashboard for food management</li>
-            <li>Search and filtering</li>
-            <li>Real-time likes, saves, and comments</li>
-          </ul>
-          <h3>Tech Stack</h3>
-          <p>Frontend: React 19, Vite, Axios, CSS Modules</p>
-          <p>Backend: Node.js, Express, MongoDB, JWT</p>
-          <p>Media: ImageKit for video storage</p>
-        </div>
       </div>
       </div>
     </>
