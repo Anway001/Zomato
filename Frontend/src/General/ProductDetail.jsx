@@ -204,7 +204,7 @@ function ProductDetail() {
                     <div className="related-products">
                         <h2>You might also like</h2>
                         <div className="related-grid">
-                            {relatedProducts.map(relatedProduct => (
+                            {relatedProducts.slice(0, 6).map(relatedProduct => (
                                 <Link
                                     key={relatedProduct._id}
                                     to={`/product/${relatedProduct._id}`}

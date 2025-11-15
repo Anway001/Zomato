@@ -1,0 +1,40 @@
+This project is a full-stack clone of Zomato, a popular food delivery platform. It is built with the MERN stack (MongoDB, Express.js, React, Node.js) and is divided into two main parts: a backend server and a frontend client.
+
+Backend Features:
+- RESTful API: Built with Express.js and Node.js.
+- Database: Uses MongoDB with Mongoose for data modeling.
+- Authentication: Implements JWT-based authentication for both regular users and food partners, with separate registration and login flows.
+- User Features:
+  - CRUD operations for user profiles.
+  - Follow/unfollow other users.
+- Food & Restaurant Features:
+  - Food partners can create, update, and delete food items.
+  - Users can browse and search for food.
+- Order Management:
+  - Users can place orders.
+  - Food partners can view and manage incoming orders.
+- Social Interactions:
+  - Users can like and comment on food items.
+  - Users can save their favorite food items.
+- Storage: Includes services for handling file storage (e.g., for food images).
+
+Frontend Features:
+- Modern UI: Built with React and Vite for a fast development experience.
+- Component-Based Architecture: The application is structured into reusable components for different features.
+- Routing: Uses a router to handle navigation between different pages.
+- State Management: Utilizes React Context for managing global state, such as the shopping cart.
+- User-Facing Application:
+  - Home page to explore food.
+  - Detailed view for each food product.
+  - Shopping cart functionality.
+  - Checkout process to place an order.
+  - Order history to track past orders.
+  - A "Saved" section for favorite items.
+- Food Partner Dashboard:
+  - A dedicated interface for food partners to manage their offerings.
+  - Create new food listings.
+  - View and manage incoming customer orders.
+  - Manage their profile.
+
+Overall Architecture:
+The project follows a client-server architecture. The React frontend communicates with the Node.js/Express backend via API calls. The backend handles all business logic, database interactions, and authentication, while the frontend is responsible for rendering the user interface and managing the user experience.

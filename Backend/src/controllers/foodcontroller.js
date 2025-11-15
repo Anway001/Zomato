@@ -291,20 +291,10 @@ async function getRelatedFoods(req, res) {
             const categoryMatches = await foodmodel.find({
                 _id: { $ne: foodId },
                 category: food.category,
-                tags: { $nin: food.tags } // Exclude already found items
+                tags: { $nin: food.tags || [] } // Exclude already found items
             }).sort({ likeCount: -1, saveCount: -1 }).limit(6 - relatedFoods.length);
 
             relatedFoods = [...relatedFoods, ...categoryMatches];
-        }
-
-        // Third priority: Popular foods from other categories (if still not enough)
-        if (relatedFoods.length < 6) {
-            const popularFoods = await foodmodel.find({
-                _id: { $ne: foodId },
-                category: { $ne: food.category }
-            }).sort({ likeCount: -1, saveCount: -1, createdAt: -1 }).limit(6 - relatedFoods.length);
-
-            relatedFoods = [...relatedFoods, ...popularFoods];
         }
 
         // Remove duplicates and limit to 6 items

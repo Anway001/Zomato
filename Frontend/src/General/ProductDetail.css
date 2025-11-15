@@ -436,28 +436,106 @@
         gap: var(--space-4);
     }
 
+    .product-media {
+        position: relative;
+        top: 0;
+    }
+
+    .product-video {
+        max-height: 300px;
+    }
+
+    .product-info {
+        gap: var(--space-4);
+    }
+
     .product-title {
         font-size: var(--font-size-2xl);
+        margin-bottom: var(--space-2);
     }
 
     .product-price {
         font-size: var(--font-size-2xl);
     }
 
+    .product-description p {
+        font-size: var(--font-size-sm);
+    }
+
+    .quantity-controls {
+        width: 100%;
+    }
+
+    .quantity-controls button {
+        flex: 1;
+    }
+
+    .quantity-controls span {
+        flex: 1;
+        text-align: center;
+    }
+
     .action-buttons {
         flex-direction: column;
+        gap: var(--space-2);
     }
 
     .add-to-cart-btn, .buy-now-btn {
         min-width: auto;
+        padding: var(--space-3) var(--space-4);
+        font-size: var(--font-size-sm);
+    }
+
+    .related-products {
+        margin-top: var(--space-8);
+        padding: var(--space-4) 0;
+    }
+
+    .related-products h2 {
+        font-size: var(--font-size-xl);
+        margin-bottom: var(--space-4);
     }
 
     .related-grid {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: var(--space-4);
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: var(--space-3);
+    }
+
+    .related-card {
+        border-radius: var(--radius-md);
     }
 
     .related-video {
-        height: 140px;
+        height: 120px;
+    }
+
+    .related-info {
+        padding: var(--space-2) var(--space-2);
+    }
+
+    .related-info h4 {
+        font-size: var(--font-size-sm);
+        margin-bottom: var(--space-1);
+    }
+
+    .related-info p {
+        font-size: var(--font-size-sm);
+    }
+
+    .partner-info {
+        padding: var(--space-3);
+        margin-top: var(--space-4);
+    }
+
+    .partner-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: var(--font-size-base);
+    }
+
+    .product-actions {
+        padding-top: var(--space-4);
+        gap: var(--space-4);
+        margin-top: var(--space-4);
     }
 }
