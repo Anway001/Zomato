@@ -2,19 +2,21 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../CartContext';
+import { useToast } from '../ToastContext';
 import BottomNav from './BottomNav';
 import './Checkout.css';
 
 function Checkout() {
     const { cart, clearCart, getTotalPrice } = useCart();
     const navigate = useNavigate();
+    const { showToast } = useToast();
     const [deliveryAddress, setDeliveryAddress] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!deliveryAddress.trim()) {
-            alert('Please enter delivery address');
+            showToast('Please enter delivery address', 'warning');
             return;
         }
 
@@ -34,12 +36,13 @@ function Checkout() {
             }, { withCredentials: true });
 
             console.log('Order response:', response.data);
-            alert('Order placed successfully!');
+            showToast('Order placed successfully!', 'success');
             clearCart();
             navigate('/orders');
         } catch (error) {
             console.error('Error placing order:', error.response?.data || error.message);
-            alert(error.response?.data?.error || error.response?.data?.message || 'Failed to place order. Please try again.');
+            const errorMsg = error.response?.data?.error || error.response?.data?.message || 'Failed to place order. Please try again.';
+            showToast(errorMsg, 'error');
         } finally {
             setLoading(false);
         }

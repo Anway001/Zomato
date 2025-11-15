@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../CartContext';
+import { useToast } from '../ToastContext';
+import LazyVideo from '../components/LazyVideo';
 import BottomNav from './BottomNav';
 import './ProductDetail.css';
 
@@ -9,6 +11,7 @@ function ProductDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
     const { addToCart, cart } = useCart();
+    const { showToast } = useToast();
     const [product, setProduct] = useState(null);
     const [relatedProducts, setRelatedProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -56,7 +59,7 @@ function ProductDetail() {
             for (let i = 0; i < quantity; i++) {
                 addToCart(product);
             }
-            // Could add a toast notification here
+            showToast(`Added ${quantity} ${product.name}${quantity > 1 ? 's' : ''} to cart!`, 'success');
         }
     };
 
@@ -101,7 +104,7 @@ function ProductDetail() {
             <div className="product-detail-content">
                 <div className="product-main">
                     <div className="product-media">
-                        <video
+                        <LazyVideo
                             src={product.video}
                             controls
                             className="product-video"
@@ -210,12 +213,12 @@ function ProductDetail() {
                                     to={`/product/${relatedProduct._id}`}
                                     className="related-card"
                                 >
-                                    <video
+                                    <LazyVideo
                                         src={relatedProduct.video}
                                         muted
                                         className="related-video"
-                                        onMouseEnter={(e) => e.target.play()}
-                                        onMouseLeave={(e) => e.target.pause()}
+                                        onMouseEnter={(e) => e.target.play?.()}
+                                        onMouseLeave={(e) => e.target.pause?.()}
                                     />
                                     <div className="related-info">
                                         <h4>{relatedProduct.name}</h4>

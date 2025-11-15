@@ -56,14 +56,25 @@ function PartnerOrders() {
     };
 
     if (loading) {
-        return <div className="partner-orders-container">Loading orders...</div>;
+        return (
+            <div className="partner-orders-container">
+                <div className="loading-state">
+                    <p>Loading orders...</p>
+                </div>
+            </div>
+        );
     }
 
     return (
         <div className="partner-orders-container">
             <h2>My Orders</h2>
             {orders.length === 0 ? (
-                <p>No orders yet.</p>
+                <div className="orders-empty-state">
+                    <div className="empty-icon">📦</div>
+                    <h3>No orders yet</h3>
+                    <p>Your orders will appear here once customers place them</p>
+                    <p className="empty-hint">Make sure your restaurant is active and your menu items are available</p>
+                </div>
             ) : (
                 <div className="orders-list">
                     {orders.map(order => (

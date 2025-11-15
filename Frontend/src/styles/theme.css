@@ -380,11 +380,71 @@ body {
 .reel-card { min-width:140px; height:92px; border-radius:10px; background:var(--accent); }
 
 /* Mobile optimizations */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--space-2);
+  }
+
+  .btn {
+    min-height: 44px;
+    padding: var(--space-3) var(--space-4);
+  }
+
+  input, textarea, select {
+    font-size: 16px;
+  }
+}
+
 @media (max-width: 520px) {
-  .auth-card { padding: calc(var(--space-md) + 0.5rem); border-radius: 12px; }
-  .auth-title { font-size: 1.05rem; }
-  .form-input { font-size: 0.98rem; }
+  .auth-card { 
+    padding: var(--space-6); 
+    border-radius: 12px; 
+  }
+  .auth-title { 
+    font-size: 1.5rem; 
+  }
+  .form-input { 
+    font-size: 16px;
+    padding: var(--space-3) var(--space-3);
+  }
+
+  .btn {
+    width: 100%;
+    min-height: 48px;
+    font-size: var(--font-size-sm);
+    padding: var(--space-4) var(--space-3);
+  }
+
+  .card {
+    margin: 0 calc(var(--space-2) * -1);
+    border-radius: 0;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  button, a, input[type="button"], input[type="submit"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .btn {
+    min-height: 48px;
+  }
 }
 
 /* Small helper note style */
-.theme-note { font-size: 0.85rem; color: var(--muted); text-align:center; margin-top:0.5rem; }
+.theme-note { 
+  font-size: 0.85rem; 
+  color: var(--text-muted); 
+  text-align: center; 
+  margin-top: 0.5rem; 
+}
+
+/* Improved visibility for mobile buttons */
+@media (max-width: 480px) {
+  .btn-primary, .btn-secondary, .btn-outline, .btn-ghost {
+    border-radius: var(--radius-lg);
+    font-weight: var(--font-weight-semibold);
+  }
+}

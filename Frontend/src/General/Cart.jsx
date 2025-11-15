@@ -1,11 +1,26 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../CartContext';
+import { useToast } from '../ToastContext';
 import BottomNav from './BottomNav';
 import './Cart.css';
 
 function Cart() {
     const { cart, removeFromCart, updateQuantity, getTotalPrice } = useCart();
+    const { showToast } = useToast();
+
+    const handleRemoveFromCart = (item) => {
+        removeFromCart(item._id);
+        showToast(`${item.name} removed from cart`, 'info');
+    };
+
+    const handleUpdateQuantity = (item, newQuantity) => {
+        if (newQuantity <= 0) {
+            handleRemoveFromCart(item);
+        } else {
+            updateQuantity(item._id, newQuantity);
+        }
+    };
 
     if (cart.length === 0) {
         return (
@@ -42,7 +57,7 @@ function Cart() {
                         <div className="quantity-controls">
                             <button
                                 className="quantity-btn"
-                                onClick={() => updateQuantity(item._id, item.quantity - 1)}
+                                onClick={() => handleUpdateQuantity(item, item.quantity - 1)}
                                 disabled={item.quantity <= 1}
                             >
                                 −
@@ -50,13 +65,13 @@ function Cart() {
                             <span className="quantity-display">{item.quantity}</span>
                             <button
                                 className="quantity-btn"
-                                onClick={() => updateQuantity(item._id, item.quantity + 1)}
+                                onClick={() => handleUpdateQuantity(item, item.quantity + 1)}
                             >
                                 +
                             </button>
                         </div>
                         <div className="item-total">₹{((item.price || 100) * item.quantity).toFixed(2)}</div>
-                        <button className="remove-btn" onClick={() => removeFromCart(item._id)}>×</button>
+                        <button className="remove-btn" onClick={() => handleRemoveFromCart(item)}>×</button>
                     </div>
                 ))}
             </div>
