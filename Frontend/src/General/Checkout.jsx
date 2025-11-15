@@ -23,20 +23,23 @@ function Checkout() {
             const items = cart.map(item => ({
                 food: item._id,
                 quantity: item.quantity,
-                price: item.price
+                price: item.price || 100
             }));
 
+            console.log('Placing order with items:', items);
+            
             const response = await axios.post('http://localhost:8080/api/orders', {
                 items,
                 deliveryAddress
             }, { withCredentials: true });
 
+            console.log('Order response:', response.data);
             alert('Order placed successfully!');
             clearCart();
-            navigate('/orders'); // Assuming we'll have an orders page
+            navigate('/orders');
         } catch (error) {
-            console.error('Error placing order:', error);
-            alert('Failed to place order. Please try again.');
+            console.error('Error placing order:', error.response?.data || error.message);
+            alert(error.response?.data?.error || error.response?.data?.message || 'Failed to place order. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -112,7 +115,6 @@ function Checkout() {
                         {cart.map(item => (
                             <div key={item._id} className="checkout-item">
                                 <div className="item-info">
-                                    <img src={item.image || '/placeholder-food.jpg'} alt={item.name} className="item-image" />
                                     <div className="item-details">
                                         <h4>{item.name}</h4>
                                         <span className="item-quantity">Qty: {item.quantity}</span>

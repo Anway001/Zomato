@@ -34,7 +34,6 @@ function Cart() {
             <div className="cart-items">
                 {cart.map(item => (
                     <div key={item._id} className="cart-item">
-                        <img src={item.image || '/placeholder-food.jpg'} alt={item.name} className="item-image" />
                         <div className="item-details">
                             <h3 className="item-name">{item.name}</h3>
                             <p className="item-description">{item.description || item.discription}</p>

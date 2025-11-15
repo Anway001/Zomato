@@ -10,6 +10,10 @@ async function createOrder(req, res) {
             return res.status(400).json({ error: 'Items are required' });
         }
 
+        if (!deliveryAddress || !deliveryAddress.trim()) {
+            return res.status(400).json({ error: 'Delivery address is required' });
+        }
+
         let totalAmount = 0;
         const orderItems = [];
 
@@ -20,11 +24,9 @@ async function createOrder(req, res) {
                 return res.status(404).json({ error: `Food item ${item.food} not found` });
             }
             if (food.availableQuantity < item.quantity) {
-                return res.status(400).json({ error: `Insufficient stock for ${food.name}` });
+                return res.status(400).json({ error: `Insufficient stock for ${food.name}. Available: ${food.availableQuantity}` });
             }
-            // Assume price is stored in food model or passed; for now, use a default or calculate
-            // Since no price in foodmodel, perhaps add price to items in request
-            const price = item.price || 100; // placeholder
+            const price = food.price;
             orderItems.push({
                 food: item.food,
                 quantity: item.quantity,
@@ -54,7 +56,7 @@ async function createOrder(req, res) {
         });
     } catch (error) {
         console.error('Error creating order:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: error.message || 'Internal server error' });
     }
 }
 
