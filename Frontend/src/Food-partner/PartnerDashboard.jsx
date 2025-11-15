@@ -10,6 +10,9 @@ function PartnerDashboard() {
     const [foodItems, setFoodItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [restockModal, setRestockModal] = useState(null);
+    const [restockQuantity, setRestockQuantity] = useState('');
+    const [isRestocking, setIsRestocking] = useState(false);
     const [stats, setStats] = useState({
         totalItems: 0,
         totalLikes: 0,
@@ -84,7 +87,6 @@ function PartnerDashboard() {
                 withCredentials: true
             });
 
-            // Remove from local state
             setFoodItems(prev => prev.filter(item => item._id !== itemId));
             setStats(prev => ({
                 ...prev,
@@ -94,6 +96,49 @@ function PartnerDashboard() {
         } catch (error) {
             console.error('Error deleting item:', error);
             alert('Failed to delete item');
+        }
+    };
+
+    const handleRestockClick = (item) => {
+        setRestockModal(item);
+        setRestockQuantity(item.availableQuantity || 0);
+    };
+
+    const handleRestockSubmit = async () => {
+        if (!restockModal || !restockQuantity) {
+            alert('Please enter a quantity');
+            return;
+        }
+
+        setIsRestocking(true);
+        try {
+            await axios.put(
+                `http://localhost:8080/api/food/${restockModal._id}`,
+                {
+                    availableQuantity: parseInt(restockQuantity),
+                    name: restockModal.name,
+                    discription: restockModal.discription,
+                    category: restockModal.category,
+                    tags: restockModal.tags.join(', '),
+                    price: restockModal.price
+                },
+                { withCredentials: true }
+            );
+
+            setFoodItems(prev => prev.map(item =>
+                item._id === restockModal._id
+                    ? { ...item, availableQuantity: parseInt(restockQuantity) }
+                    : item
+            ));
+
+            alert('Stock updated successfully!');
+            setRestockModal(null);
+            setRestockQuantity('');
+        } catch (error) {
+            console.error('Error updating stock:', error);
+            alert('Failed to update stock');
+        } finally {
+            setIsRestocking(false);
         }
     };
 
@@ -159,6 +204,37 @@ function PartnerDashboard() {
                 </Link>
             </div>
 
+            {foodItems.filter(item => item.availableQuantity <= 0).length > 0 && (
+                <section className="dashboard-content out-of-stock-section">
+                    <h2>⚠️ Out of Stock Items ({foodItems.filter(item => item.availableQuantity <= 0).length})</h2>
+                    <div className="items-grid">
+                        {foodItems.filter(item => item.availableQuantity <= 0).map(item => (
+                            <div key={item._id} className="item-card out-of-stock">
+                                <div className="out-of-stock-badge">OUT OF STOCK</div>
+                                <div className="item-media">
+                                    <video src={item.video} muted />
+                                </div>
+                                <div className="item-info">
+                                    <h4>{item.name}</h4>
+                                    <p className="item-description">{item.discription}</p>
+                                    <div className="item-stats">
+                                        <span>❤️ {item.likeCount || 0}</span>
+                                        <span>🔖 {item.saveCount || 0}</span>
+                                        <span>₹{item.price || 'N/A'}</span>
+                                    </div>
+                                    <button
+                                        className="restock-btn"
+                                        onClick={() => handleRestockClick(item)}
+                                    >
+                                        📦 Restock Now
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )}
+
             <section className="dashboard-content">
                 <h2>Your Food Items & Reels</h2>
 
@@ -174,6 +250,7 @@ function PartnerDashboard() {
                     <div className="items-grid">
                         {foodItems.map(item => (
                             <div key={item._id} className="item-card">
+                                {item.availableQuantity <= 0 && <div className="out-of-stock-badge">OUT OF STOCK</div>}
                                 <div className="item-media">
                                     <video
                                         src={item.video}
@@ -189,6 +266,9 @@ function PartnerDashboard() {
                                         <span>❤️ {item.likeCount || 0}</span>
                                         <span>🔖 {item.saveCount || 0}</span>
                                         <span>₹{item.price || 'N/A'}</span>
+                                        <span className={item.availableQuantity <= 0 ? 'stock-low' : 'stock-ok'}>
+                                            📦 {item.availableQuantity}
+                                        </span>
                                     </div>
                                     <div className="item-actions">
                                         <button
@@ -203,6 +283,12 @@ function PartnerDashboard() {
                                         >
                                             Delete
                                         </button>
+                                        <button
+                                            className="restock-btn"
+                                            onClick={() => handleRestockClick(item)}
+                                        >
+                                            📦 Restock
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -210,6 +296,44 @@ function PartnerDashboard() {
                     </div>
                 )}
             </section>
+
+            {restockModal && (
+                <div className="modal-overlay" onClick={() => setRestockModal(null)}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <h3>Restock Item: {restockModal.name}</h3>
+                        <div className="modal-body">
+                            <p><strong>Current Stock:</strong> {restockModal.availableQuantity}</p>
+                            <label>
+                                <strong>New Quantity:</strong>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    value={restockQuantity}
+                                    onChange={(e) => setRestockQuantity(e.target.value)}
+                                    placeholder="Enter quantity"
+                                />
+                            </label>
+                        </div>
+                        <div className="modal-actions">
+                            <button
+                                className="btn-cancel"
+                                onClick={() => setRestockModal(null)}
+                                disabled={isRestocking}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="btn-confirm"
+                                onClick={handleRestockSubmit}
+                                disabled={isRestocking}
+                            >
+                                {isRestocking ? 'Updating...' : 'Update Stock'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <BottomNav />
         </div>
     );
