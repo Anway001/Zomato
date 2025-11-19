@@ -1,4 +1,4 @@
-# Zomato Clone
+# ReelCart
 
 ## Overview
 A full-stack food ordering and discovery platform inspired by Zomato, featuring separate entertainment reels and an explore page for ordering. The project exposes a Node.js/Express API backed by MongoDB and a React 19 + Vite frontend with grid-based food browsing, cart functionality, and comprehensive partner management tools.
