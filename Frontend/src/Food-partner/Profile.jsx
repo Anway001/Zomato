@@ -165,7 +165,6 @@ function Profile() {
                   controls={false}
                   autoPlay={i === fullscreenVideo}
                   loop
-                  muted
                   playsInline
                 />
               </div>

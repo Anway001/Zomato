@@ -405,7 +405,6 @@ function Saved() {
                                     src={item.video}
                                     controls={false}
                                     loop
-                                    muted
                                 />
                                 <div className="reel-overlay">
                                     <div className="overlay-content">

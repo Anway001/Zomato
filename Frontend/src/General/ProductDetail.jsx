@@ -297,7 +297,6 @@ function ProductDetail() {
                                 >
                                     <LazyVideo
                                         src={relatedProduct.video}
-                                        muted
                                         className="related-video"
                                         onMouseEnter={(e) => e.target.play?.()}
                                         onMouseLeave={(e) => e.target.pause?.()}
