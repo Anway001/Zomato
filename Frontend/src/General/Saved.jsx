@@ -259,7 +259,7 @@ function Saved() {
         }
         setCommentLoading((previous) => ({ ...previous, [key]: true }));
         try {
-            const response = await axios.get(`http://localhost:8080/api/food/${itemId}/comments`, { withCredentials: true });
+            const response = await axios.get(`${API_BASE_URL}/api/food/${itemId}/comments`, { withCredentials: true });
             const list = Array.isArray(response.data?.comments) ? response.data.comments : [];
             setComments((previous) => ({ ...previous, [key]: list }));
             setCommentCounts((previous) => ({ ...previous, [key]: list.length }));
@@ -292,7 +292,7 @@ function Saved() {
             return;
         }
         try {
-            const response = await axios.post(`http://localhost:8080/api/food/${itemId}/comments`, { content: value }, { withCredentials: true });
+            const response = await axios.post(`${API_BASE_URL}/api/food/${itemId}/comments`, { content: value }, { withCredentials: true });
             const created = response.data?.comment;
             const count = typeof response.data?.count === 'number' ? response.data.count : null;
             setComments((previous) => {
@@ -324,7 +324,7 @@ function Saved() {
             return;
         }
         try {
-            await axios.post('http://localhost:8080/api/food/likes', { foodId: itemId }, { withCredentials: true });
+            await axios.post(`${API_BASE_URL}/api/food/likes`, { foodId: itemId }, { withCredentials: true });
             setLikes((previous) => {
                 const nextLiked = !previous[key];
                 setLikeCounts((counts) => {
@@ -346,7 +346,7 @@ function Saved() {
         }
         const wasSaved = Boolean(saves[key]);
         try {
-            await axios.post('http://localhost:8080/api/food/saves', { foodId: itemId }, { withCredentials: true });
+            await axios.post(`${API_BASE_URL}/api/food/saves`, { foodId: itemId }, { withCredentials: true });
             setSaves((previous) => {
                 const isSaved = !previous[key];
                 setSaveCounts((counts) => {

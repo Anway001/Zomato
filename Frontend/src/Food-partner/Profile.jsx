@@ -52,7 +52,7 @@ function Profile() {
 
         // Check if this is the current user's own profile (only if they're a food partner)
         try {
-          const currentUserResponse = await axios.get('http://localhost:8080/api/auth/me', {
+          const currentUserResponse = await axios.get(`${API_BASE_URL}/api/auth/me`, {
             withCredentials: true
           });
           setIsOwnProfile(currentUserResponse.data?.type === 'foodpartner' && currentUserResponse.data?.partner?._id === id);
@@ -90,7 +90,7 @@ function Profile() {
       return;
     }
     setFollowLoading(true);
-    axios.post(`http://localhost:8080/api/follow/${id}`, {}, { withCredentials: true })
+    axios.post(`${API_BASE_URL}/api/follow/${id}`, {}, { withCredentials: true })
     .then(response => {
       setIsFollowing(response.data?.isFollowing ?? false);
       setFollowersCount(prev => {
